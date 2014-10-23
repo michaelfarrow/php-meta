@@ -1,0 +1,18 @@
+{
+    "name": "weyforth/meta",
+    "description": "",
+    "license": "proprietary",
+    "require": {
+    },
+    "authors": [
+        {
+            "name": "Mike Farrow",
+            "email": "contact@mikefarrow.co.uk"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Weyforth\\Meta": "src/"
+        }
+    }
+}
