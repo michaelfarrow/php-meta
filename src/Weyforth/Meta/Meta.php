@@ -319,7 +319,7 @@ class Meta
 
 	protected static function outputTag( $key, $value, $prop = false )
 	{
-		return "<meta ".($prop ? 'property' : 'name')."=\"".$key."\" content=\"".htmlspecialchars(htmlspecialchars_decode($value))."\" />\n";
+		return "<meta ".($prop ? 'property' : 'name')."=\"".$key."\" content=\"".str_replace('"', '&quot;',$value)."\" />\n";
 	}
 
 	protected static function outputTags( $title, $req, $rec, $tags, $prop = false )
