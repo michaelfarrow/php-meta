@@ -319,6 +319,14 @@ class Meta
 
 	protected static function outputTag( $key, $value, $prop = false )
 	{
+		$out = '';
+		if($value && is_array($value)){
+			foreach ($value as $sub) {
+				$out .= "<meta ".($prop ? 'property' : 'name')."=\"".$key."\" content=\"".str_replace('"', '&quot;',$sub)."\" />\n";
+			}
+			return $out;
+		}
+
 		return "<meta ".($prop ? 'property' : 'name')."=\"".$key."\" content=\"".str_replace('"', '&quot;',$value)."\" />\n";
 	}
 
@@ -329,7 +337,7 @@ class Meta
 		$out .= self::checkTags( $req, $rec, $tags );
 
 		$tags_non_empty = array_filter( $tags );
-		$tags_empty = array_diff( $tags, $tags_non_empty );
+		$tags_empty = array_diff_key( $tags, $tags_non_empty );
 
 		foreach( $tags_non_empty as $key => $value ){
 			$out .= self::outputTag( $key, $value, $prop );
@@ -395,7 +403,16 @@ class Meta
 			$data['og:site_name'] = self::$siteName;
 			$data['og:title'] = self::$title;
 			$data['og:description'] = self::$description;
-			$data['og:image'] = self::$image;
+
+			if(self::$images && is_array(self::$images)){
+				if(self::$image) $data['og:image'][] = self::$image;
+
+				foreach (self::$images as $image) {
+					$data['og:image'][] = $image;
+				}
+			}else{
+				$data['og:image'] = self::$image;
+			}
 
 			if($video){
 				$data['og:video:type'] = 'application/x-shockwave-flash';
