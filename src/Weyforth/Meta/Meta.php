@@ -317,17 +317,31 @@ class Meta
 		return $name ? '@' . $name : null;
 	}
 
+	protected static function expandTag( $key, $value, $prop ){
+		if($key == 'og:image' && is_array($value) && count($value) == 3){
+			$out = '';
+
+			$out .= "<meta ".($prop ? 'property' : 'name')."=\"".$key."\" content=\"".str_replace('"', '&quot;',$value[0])."\" />\n";
+			$out .= "<meta ".($prop ? 'property' : 'name')."=\"".$key.":width\" content=\"".str_replace('"', '&quot;',$value[1])."\" />\n";
+			$out .= "<meta ".($prop ? 'property' : 'name')."=\"".$key.":height\" content=\"".str_replace('"', '&quot;',$value[2])."\" />\n";
+
+			return $out;
+		}
+
+		return "<meta ".($prop ? 'property' : 'name')."=\"".$key."\" content=\"".str_replace('"', '&quot;',$value)."\" />\n";
+	}
+
 	protected static function outputTag( $key, $value, $prop = false )
 	{
 		$out = '';
 		if($value && is_array($value)){
 			foreach ($value as $sub) {
-				$out .= "<meta ".($prop ? 'property' : 'name')."=\"".$key."\" content=\"".str_replace('"', '&quot;',$sub)."\" />\n";
+				$out .= self::expandTag($key, $sub, $prop);
 			}
 			return $out;
 		}
 
-		return "<meta ".($prop ? 'property' : 'name')."=\"".$key."\" content=\"".str_replace('"', '&quot;',$value)."\" />\n";
+		return self::expandTag($key, $value, $prop);
 	}
 
 	protected static function outputTags( $title, $req, $rec, $tags, $prop = false )
@@ -369,7 +383,13 @@ class Meta
 			$data['twitter:title'] = self::$title;
 			$data['twitter:description'] = self::$description;
 			$data['twitter:url'] = $url;
-			$data['twitter:image'] = self::$image;
+			if(is_array(self::$image)){
+				$data['twitter:image'] = self::$image[0];
+				$data['twitter:image:width'] = self::$image[1];
+				$data['twitter:image:height'] = self::$image[2];
+			}else{
+				$data['twitter:image'] = self::$image;
+			}
 
 			switch ($type) {
 				case 'player':
