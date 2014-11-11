@@ -19,6 +19,8 @@ class Meta
 	protected static $title;
 	protected static $description;
 	protected static $image;
+	protected static $twitterCardsImage;
+	protected static $openGraphImage;
 	protected static $images;
 	protected static $video;
 	protected static $videoWidth = 1920;
@@ -143,6 +145,16 @@ class Meta
 	public static function image( $image )
 	{
 		self::$image = $image;
+	}
+
+	public static function twitterCardsImage( $image )
+	{
+		self::$twitterCardsImage = $image;
+	}
+
+	public static function openGraphImage( $image )
+	{
+		self::$openGraphImage = $image;
 	}
 
 	public static function images( $images )
@@ -383,13 +395,25 @@ class Meta
 			$data['twitter:title'] = self::$title;
 			$data['twitter:description'] = self::$description;
 			$data['twitter:url'] = $url;
-			if(is_array(self::$image)){
-				$data['twitter:image'] = self::$image[0];
-				$data['twitter:image:width'] = self::$image[1];
-				$data['twitter:image:height'] = self::$image[2];
+
+			if(self::$twitterCardsImage){
+				if(is_array(self::$twitterCardsImage)){
+					$data['twitter:image'] = self::$twitterCardsImage[0];
+					$data['twitter:image:width'] = self::$twitterCardsImage[1];
+					$data['twitter:image:height'] = self::$twitterCardsImage[2];
+				}else{
+					$data['twitter:image'] = self::$twitterCardsImage;
+				}
 			}else{
-				$data['twitter:image'] = self::$image;
+				if(is_array(self::$image)){
+					$data['twitter:image'] = self::$image[0];
+					$data['twitter:image:width'] = self::$image[1];
+					$data['twitter:image:height'] = self::$image[2];
+				}else{
+					$data['twitter:image'] = self::$image;
+				}
 			}
+			
 
 			switch ($type) {
 				case 'player':
@@ -431,7 +455,11 @@ class Meta
 					$data['og:image'][] = $image;
 				}
 			}else{
-				$data['og:image'] = self::$image;
+				if(self::$openGraphImage){
+					$data['og:image'] = self::$openGraphImage;
+				}else{
+					$data['og:image'] = self::$image;
+				}
 			}
 
 			if($video){
